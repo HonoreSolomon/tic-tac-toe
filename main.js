@@ -34,7 +34,27 @@ const GameLogicModule = () => {
   ];
   const infoDisplay = document.querySelector('#message');
   const result = document.querySelector('#result-display');
+  const restart = document.querySelector('#restart-button')
   let symbol = 'circle'
+  
+
+
+  restart.addEventListener('click', restartLogic)
+  function restartLogic () {
+    let allSquares = Array.from(document.querySelectorAll('.square'));
+    infoDisplay.textContent = '';
+    result.textContent = '';
+    
+    allSquares.forEach(square => {
+      while (square.firstChild) {
+        square.removeChild(square.lastChild);
+      }
+      square.addEventListener('click', addSymbol)
+    } )
+    
+
+  }
+    
   function addSymbol(e) {
     
     const symbolDisplay = document.createElement('div');
@@ -48,6 +68,7 @@ const GameLogicModule = () => {
 
   function checkScore ()  {
     let allSquares = Array.from(document.querySelectorAll('.square'));
+    const isTie = allSquares.every(square => square.firstChild)
     function checkWinner(symbolToCheck) {
       for (const combo of winningCombos) {
         const wins = combo.every(cell =>
@@ -58,12 +79,25 @@ const GameLogicModule = () => {
             result.textContent = `${symbolToCheck.charAt(0).toUpperCase() + symbolToCheck.slice(1)} Wins!!`
             allSquares.forEach(square => square.replaceWith(square.cloneNode(true)))
             infoDisplay.textContent = ''
-            return
+            return true
           }
       }
     }
+
     checkWinner('cross');
     checkWinner('circle')
+    console.log(isTie)
+    if (!checkWinner('cross') && !checkWinner('circle') && isTie) {
+      result.textContent = `It is a Tie!`
+      infoDisplay.textContent = ''
+      return
+    }
+
+
+
+    
+
+    
   }
   return {
     addSymbol,
